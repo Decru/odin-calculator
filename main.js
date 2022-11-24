@@ -8,21 +8,27 @@ function updateDisplay() {
 }
 
 function processInput(char) {
-    if (!validateInput()) return;
+    if (!validateInput(char)) return;
     if (char === 'clear') return clearAll();
-    if ('1234567890'.includes(char)) return appendDigit(char);
+    if ('1234567890.'.includes(char)) return appendDigit(char);
     if (char === 'backspace') return backspace();
     if (char === 'equals') {
         operate();
-        display_num = accumulator;
+        show_accumulator = true;
+        displayAccumulator();
         clearAccumulatorAndOperations();
+        return;
     }
 
     addOperator(char);
 
     if (show_accumulator) {
-        display_num = accumulator;
+        displayAccumulator();
     }
+}
+
+function displayAccumulator() {
+    display_num = accumulator.toString();
 }
 
 function clearDisplay() {
@@ -32,17 +38,18 @@ function clearDisplay() {
 function clearAccumulatorAndOperations() {
     current_operation = null;
     accumulator = null;
-    show_accumulator = false;
 }
 
 function clearAll() {
     clearDisplay();
     clearAccumulatorAndOperations();
+    show_accumulator = false;
 }
 
 function validateInput(input) {
-    if (input === 'decimal' && display_num.includes('.')) return false;
-    return true;
+    const operations = ['add', 'multiply', 'divide', 'subtract'];
+    if (input === '.' && display_num.includes('.') && !show_accumulator) return false;
+    return !(operations.includes(input) && display_num === '');
 }
 
 function backspace() {
@@ -74,7 +81,6 @@ function operate() {
         accumulator += parseFloat(display_num);
     }
 }
-
 
 buttons = document.querySelectorAll('button')
 for (let i = 0; i < buttons.length; i++) {
