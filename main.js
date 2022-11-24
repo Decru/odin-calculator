@@ -68,18 +68,20 @@ function appendDigit(digit) {
 }
 
 function addOperator(operator) {
-    if (operator === 'add') {
-        current_operation = 'add';
-        show_accumulator = true;
-    }
     operate();
+    current_operation = operator;
+    show_accumulator = true;
 }
 
 function operate() {
-    if (current_operation === 'add') {
-        accumulator = accumulator ?? 0;
-        accumulator += parseFloat(display_num);
-    }
+    const current_display_number = parseFloat(display_num);
+    if (accumulator === null) return accumulator = current_display_number;
+
+    if (current_operation === 'add') accumulator += current_display_number;
+    if (current_operation === 'subtract') accumulator -= current_display_number;
+    if (current_operation === 'multiply') accumulator *= current_display_number;
+    if (current_operation === 'divide') accumulator /= current_display_number;
+
 }
 
 buttons = document.querySelectorAll('button')
