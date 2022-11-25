@@ -2,14 +2,22 @@ let display_num = '';
 let current_operation = null;
 let accumulator = null;
 let show_accumulator = false;
+let error_state = false;
+let error_message = 'ERROR!!!! DIVIDED BY 0'
 
 function updateDisplay() {
-    document.querySelector('#number_display').textContent = display_num;
+    let display = document.querySelector('#number_display');
+    if (error_state) display.textContent = error_message;
+    else display.textContent = display_num;
+}
+
+function raiseErrorState() {
+    error_state = true;
 }
 
 function processInput(char) {
-    if (!validateInput(char)) return;
     if (char === 'clear') return clearAll();
+    if (error_state || !validateInput(char)) return;
     if ('1234567890.'.includes(char)) return appendDigit(char);
     if (char === 'backspace') return backspace();
     if (char === 'equals') {
@@ -28,7 +36,7 @@ function processInput(char) {
 }
 
 function displayAccumulator() {
-    display_num = accumulator.toString();
+    display_num = (Math.round(accumulator * 10**9) /10**9).toString();
 }
 
 function clearDisplay() {
@@ -44,6 +52,7 @@ function clearAll() {
     clearDisplay();
     clearAccumulatorAndOperations();
     show_accumulator = false;
+    error_state = false;
 }
 
 function validateInput(input) {
@@ -80,8 +89,11 @@ function operate() {
     if (current_operation === 'add') accumulator += current_display_number;
     if (current_operation === 'subtract') accumulator -= current_display_number;
     if (current_operation === 'multiply') accumulator *= current_display_number;
+    if (current_operation === 'divide' && current_display_number === 0) {
+        raiseErrorState();
+        return;
+    }
     if (current_operation === 'divide') accumulator /= current_display_number;
-
 }
 
 buttons = document.querySelectorAll('button')
